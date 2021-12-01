@@ -1,4 +1,5 @@
 import random
+from bangazon_api.models import product
 import faker_commerce
 from faker import Faker
 from rest_framework import status
@@ -75,3 +76,29 @@ class ProductTests(APITestCase):
         response = self.client.get('/api/products')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Product.objects.count())
+
+    def test_delete_product(self):
+        """
+        Deletes a single product
+        """
+        product = Product()
+        product.name = "Mango"
+        product.store = "Aldi"
+        product.price = 3
+        product.description = "Sweet orange fruit"
+        product.quantity = 32
+        product.location = "Fruit Aisle"
+        product.image_path = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.supermarketperimeter.com%2Fext%2Fresources%2F0722-mangoes.jpg%3F1595428736&f=1&nofb=1"
+        product.category = 1
+        
+        product.save()
+        
+        url = f'/products{product.id}'
+        
+        response = self.client.delete(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        response = self.client.get(url)
+        
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)         
