@@ -45,3 +45,7 @@ class OrderTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     # TODO: Complete Order test
+    def test_complete_order(self):
+        order = Order()
+        order.user = User.objects.get(pk=1)
+        order.save()
