@@ -184,7 +184,7 @@ class ProductView(ViewSet):
             products = products.filter(price__gt=min_price)
             
         if location:
-            products = products.filter(location__id=location)
+            products = products.filter(location__contains=location)
 
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
