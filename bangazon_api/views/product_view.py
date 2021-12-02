@@ -166,11 +166,12 @@ class ProductView(ViewSet):
         order = request.query_params.get('order_by', None)
         direction = request.query_params.get('direction', None)
         min_price = request.query_params.get('min_price', None)
+        location = request.query_params.get('location', None)
 
         if number_sold:
             products = products.annotate(
                 order_count=Count('orders')
-            ).filter(order_count__lt=number_sold)
+            ).filter(order_count__gte=number_sold)
 
         if order is not None:
             order_filter = f'-{order}' if direction == 'desc' else order
@@ -181,6 +182,9 @@ class ProductView(ViewSet):
             
         if min_price:
             products = products.filter(price__gt=min_price)
+            
+        if location:
+            products = products.filter(location__id=location)
 
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
